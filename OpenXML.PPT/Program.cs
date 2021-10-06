@@ -8,11 +8,22 @@ namespace OpenXML.PPT
     {
         static void Main(string[] args)
         {
+            // The absoluete path to the PowerPoint file
+            var path = @"E:\Downloads\Upwork part I.pptx";
+
+            // The text that will replace the {{name}} placeholder
             var replaceName = "Leader X";
 
-            var path = @"E:\Downloads\Upwork part I.pptx";
-            
-            using (PresentationDocument wd = PresentationDocument.Open(path, true))
+            var dir = Path.GetDirectoryName(path);
+            var filename = Path.GetFileNameWithoutExtension(path);
+            var ext = Path.GetExtension(path);
+
+            // The path to the new generated file with "-generated" appended to the filename of the file in the same directory
+            var newPath = Path.Combine(dir, $"{filename}-generated{ext}");
+
+            File.Copy(path, newPath);
+
+            using (PresentationDocument wd = PresentationDocument.Open(newPath, true))
             {
                 var presentationPart = wd.PresentationPart.GetPartById("rId2");
 
@@ -43,13 +54,8 @@ namespace OpenXML.PPT
                                 
                                 slide.ReplaceChild(replace, old);
 
-                                var dir = Path.GetDirectoryName(path);
-                                var filename = Path.GetFileNameWithoutExtension(path);
-                                var ext = Path.GetExtension(path);
+                                wd.Save();
 
-                                var newFilename = Path.Combine(dir, $"{filename}-copy{ext}");
-                                
-                                wd.SaveAs(newFilename);
                                 break;
                             }
                         }
